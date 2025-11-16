@@ -96,8 +96,6 @@ Flashbacker integrates with [b00t](https://github.com/elasticdotventures/_b00t_)
 
 ```bash
 # Copy datum files to b00t registry
-cp _b00t_/*.toml ~/.b00t/
-
 # Let b00t install flashbacker
 b00t learn flashbacker
 b00t install flashbacker
