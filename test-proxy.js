@@ -109,50 +109,55 @@ const tests = [
           arguments: { persona: 'architect', request: 'test' }
         }
       };
+      let tempDir;
+      try {
+        tempDir = '/tmp/test-flashback-uninit-' + Date.now();
+        fs.mkdirSync(tempDir, { recursive: true });
 
-      const proc = spawn(process.execPath, ['./flashbacker-mcp'], {
-        cwd: tempDir,
-        env: { ...process.env, CWD: tempDir }
-      });
-
-      return new Promise((resolve) => {
-        let stdout = '';
-
-        let requestSent = false;
-        proc.stdout.on('data', (data) => {
-          stdout += data.toString();
-          // Wait for server to signal readiness before sending request
-          if (!requestSent && stdout.includes('ready')) { // Replace 'ready' with actual readiness message if needed
-            proc.stdin.write(JSON.stringify(request) + '\n');
-            requestSent = true;
+        const request = {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: {
+            name: 'flashback_persona',
+            arguments: { persona: 'architect', request: 'test' }
           }
+        };
+
+        const proc = spawn(process.execPath, ['./flashbacker-mcp'], {
+          cwd: tempDir,
+          env: { ...process.env, CWD: tempDir }
         });
 
-        // Fallback: if readiness message is not received in time, send anyway after timeout
-        setTimeout(() => {
-          if (!requestSent) {
-            proc.stdin.write(JSON.stringify(request) + '\n');
-            requestSent = true;
-          }
-        }, 1000);
+        return new Promise((resolve) => {
+          let stdout = '';
 
-        setTimeout(() => {
-          proc.kill();
+          proc.stdout.on('data', (data) => {
+            stdout += data.toString();
+          });
+
+          proc.stdin.write(JSON.stringify(request) + '\n');
+
+          setTimeout(() => {
+            proc.kill();
+
+            const isBlocked = stdout.includes('🛑') && stdout.includes('not initialized');
+
+            if (isBlocked) {
+              console.log('✅ PASS: Command blocked when project not initialized');
+              resolve(true);
+            } else {
+              console.log('❌ FAIL: Command should be blocked but was not');
+              console.log(`   Output: ${stdout}`);
+              resolve(false);
+            }
+          }, 2000);
+        });
+      } finally {
+        if (tempDir) {
           fs.rmSync(tempDir, { recursive: true, force: true });
-
-          const isBlocked = stdout.includes('🛑') && stdout.includes('not initialized');
-
-          if (isBlocked) {
-            console.log('✅ PASS: Command blocked when project not initialized');
-            resolve(true);
-          } else {
-            console.log('❌ FAIL: Command should be blocked but was not');
-            console.log(`   Output: ${stdout}`);
-            resolve(false);
-          }
-        }, 2000);
-      });
-    }
+        }
+      }
   },
   {
     name: 'Manual save shows warning',
