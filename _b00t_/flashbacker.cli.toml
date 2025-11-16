@@ -1,0 +1,141 @@
+[b00t]
+name = "flashbacker"
+type = "cli"
+hint = "Claude Code state management with session continuity and AI personas"
+lfmf_category = "development"
+
+install = "npm install -g flashbacker"
+update = "npm update -g flashbacker"
+version = "flashback --version"
+version_regex = '''(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)'''
+
+[b00t.desires]
+version = ">=2.4.1"
+
+[b00t.requires]
+node = ">=18.0.0 <25.0.0"
+npm = ">=9.0.0"
+
+[b00t.learn]
+topic = "flashbacker"
+auto_digest = true
+
+[[b00t.learn.resources]]
+url = "https://github.com/agentsea/flashbacker/blob/main/README.md"
+description = "Official Flashbacker documentation"
+
+[[b00t.learn.resources]]
+url = "https://github.com/agentsea/flashbacker/blob/main/docs/user-guide/USER_GUIDE.md"
+description = "Complete user guide with workflows"
+
+[[b00t.usage]]
+description = "Initialize Flashbacker in a project"
+command = "flashback init"
+
+[[b00t.usage]]
+description = "Use AI persona for immediate analysis"
+command = '''flashback persona architect "review authentication system"'''
+
+[[b00t.usage]]
+description = "Gather context for agent analysis"
+command = '''flashback agent architect --context "review auth system"'''
+
+[[b00t.usage]]
+description = "Add knowledge to project memory"
+command = '''flashback memory add "Uses JWT tokens with RS256, 1h expiry"'''
+
+[[b00t.usage]]
+description = "Add task to working plan"
+command = '''flashback working-plan add "Implement 2FA"'''
+
+[[b00t.usage]]
+description = "Save session insights"
+command = "flashback save-session --context"
+
+[[b00t.usage]]
+description = "Load context at session start"
+command = "flashback session-start"
+
+[[b00t.usage]]
+description = "Run multi-persona discussion"
+command = '''flashback discuss "Should we use microservices?" --personas architect,devops,performance'''
+
+[[b00t.usage]]
+description = "Detect technical debt and duplicates"
+command = "flashback debt-hunter"
+
+[[b00t.usage]]
+description = "Use surgical fix methodology"
+command = '''flashback fix-master --context "login fails with 401"'''
+
+[[b00t.usage]]
+description = "Check installation status"
+command = "flashback status"
+
+[[b00t.usage]]
+description = "Run system diagnostics"
+command = "flashback doctor"
+
+[b00t.skills]
+# AI Personas (20 specialists)
+personas = [
+    "architect",
+    "security",
+    "refactorer",
+    "performance",
+    "frontend",
+    "backend",
+    "devops",
+    "qa",
+    "analyzer",
+    "mentor",
+    "product",
+    "code-critic",
+    "debate-moderator",
+    "debt-hunter",
+    "database-architect",
+    "api-designer",
+    "data-engineer",
+    "platform-engineer",
+    "docker-master",
+    "john-carmack",
+    "fix-master"
+]
+
+# Core capabilities
+commands = [
+    "init",
+    "persona",
+    "agent",
+    "memory",
+    "working-plan",
+    "save-session",
+    "session-start",
+    "discuss",
+    "debt-hunter",
+    "fix-master",
+    "doctor",
+    "status"
+]
+
+[b00t.integration]
+# Files created in user projects
+files = [
+    ".claude/flashback/memory/REMEMBER.md",
+    ".claude/flashback/memory/WORKING_PLAN.md",
+    ".claude/flashback/config/flashback.json",
+    ".claude/agents/*.md",
+    ".claude/flashback/personas/*.md",
+    ".claude/commands/fb/*.md",
+    ".claude/flashback/scripts/session-start.sh"
+]
+
+# Claude Code integration
+claude_code = true
+slash_commands = true
+agents = true
+hooks = true
+
+[b00t.env]
+# Optional environment variables
+# NODE_ENV = "production"
