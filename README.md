@@ -84,9 +84,38 @@ cd /path/to/your/project
 flashback init --mcp              # Includes context7, playwright, sequential-thinking
 ```
 
-> 📖 **[Complete Installation Guide →](docs/user-guide/INSTALLATION.md)**  
-> 📚 **[User Guide →](docs/user-guide/USER_GUIDE.md)**  
+> 📖 **[Complete Installation Guide →](docs/user-guide/INSTALLATION.md)**
+> 📚 **[User Guide →](docs/user-guide/USER_GUIDE.md)**
 > Comprehensive command guide with workflows and how-to's
+
+## 🤖 B00t Framework Integration
+
+Flashbacker integrates with [b00t](https://github.com/elasticdotventures/_b00t_) - an "agentic hive operating system" for AI agents.
+
+### Quick B00t Setup
+
+```bash
+# Copy datum files to b00t registry
+cp _b00t_/*.toml ~/.dotfiles/_b00t_/
+
+# Let b00t install flashbacker
+b00t learn flashbacker
+b00t install flashbacker
+
+# Use in agent workflows
+b00t flashback init
+b00t flashback persona architect "review auth system"
+```
+
+### Features
+
+- **Datum Registry**: Flashbacker is a first-class b00t datum (CLI + MCP)
+- **Agent Learning**: Agents can `b00t learn flashbacker` for on-demand capabilities
+- **MCP Integration**: Exposed as MCP server with 12 tools via `b00t-mcp`
+- **Docker Support**: Fallback containerized deployment
+- **Multi-Agent**: Share project memory across agent hive
+
+> 📦 **[B00t Integration Guide →](B00T_INTEGRATION.md)** - Complete setup and usage
 
 ## 🎯 How You Actually Use Flashbacker
 

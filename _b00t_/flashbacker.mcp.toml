@@ -1,0 +1,77 @@
+[b00t]
+name = "flashbacker"
+type = "mcp"
+hint = "Flashbacker MCP server for Claude Code state management"
+lfmf_category = "development"
+
+[b00t.learn]
+topic = "flashbacker-mcp"
+auto_digest = true
+
+[[b00t.learn.resources]]
+url = "https://github.com/agentsea/flashbacker"
+description = "Flashbacker repository"
+
+# Primary implementation: Direct CLI wrapper
+[[b00t.mcp_server]]
+priority = 0
+command = "b00t-mcp"
+requires = ["flashbacker"]
+transport = "stdio"
+
+[[b00t.mcp_server.args]]
+"--" = "flashback"
+
+[b00t.mcp_server.env]
+NODE_ENV = "production"
+
+# Fallback implementation: Docker container
+[[b00t.mcp_server]]
+priority = 10
+command = "docker"
+requires = ["docker"]
+transport = "stdio"
+pre_start = '''
+// Check if flashbacker-b00t image exists
+let output = sh("docker", ["images", "-q", "flashbacker-b00t:latest"]);
+if output.is_empty() {
+    print("Building flashbacker-b00t Docker image...");
+    sh("docker", ["build", "-t", "flashbacker-b00t:latest", "."]);
+}
+'''
+
+[[b00t.mcp_server.args]]
+"run" = "-i"
+"--rm" = true
+"-v" = "${PWD}:/workspace"
+"flashbacker-b00t:latest" = true
+"node" = "/app/mcp-server.js"
+
+[[b00t.usage]]
+description = "Use flashbacker through MCP to initialize project"
+command = '''b00t-mcp call flashbacker init'''
+
+[[b00t.usage]]
+description = "Use flashbacker persona through MCP"
+command = '''b00t-mcp call flashbacker persona architect "review auth system"'''
+
+[[b00t.usage]]
+description = "Add to project memory via MCP"
+command = '''b00t-mcp call flashbacker memory add "Uses PostgreSQL 15"'''
+
+[b00t.mcp_tools]
+# Tools exposed by flashbacker MCP server
+tools = [
+    "flashback_init",
+    "flashback_persona",
+    "flashback_agent",
+    "flashback_memory",
+    "flashback_working_plan",
+    "flashback_save_session",
+    "flashback_session_start",
+    "flashback_discuss",
+    "flashback_debt_hunter",
+    "flashback_fix_master",
+    "flashback_doctor",
+    "flashback_status"
+]

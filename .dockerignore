@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log
+
+# Build
+lib/
+*.tgz
+
+# Tests
+tests/
+coverage/
+
+# Docs
+docs/
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+
+# CI
+.github/
+
+# Misc
+*.log
+.env
