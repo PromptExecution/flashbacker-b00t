@@ -67,7 +67,15 @@ const tests = [
           stdout += data.toString();
         });
 
-        proc.stdin.write(JSON.stringify(request) + '\n');
+        // Wait for "Ready" message on stderr before sending the request
+        let readySent = false;
+        proc.stderr.on('data', (data) => {
+          const msg = data.toString();
+          if (!readySent && msg.includes('Ready')) {
+            readySent = true;
+            proc.stdin.write(JSON.stringify(request) + '\n');
+          }
+        });
 
         setTimeout(() => {
           proc.kill();
