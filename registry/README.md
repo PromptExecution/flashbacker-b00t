@@ -1,6 +1,6 @@
 # Poly-Proxy MCP Tool Registry
 
-**Status**: Aspirational / In Development
+**Status**: ✅ Core Features Implemented
 
 This directory contains the **poly-proxy MCP tool registry** - a codified opinion system for configuring and using MCP tools within the b00t framework.
 
@@ -55,15 +55,25 @@ The poly-proxy registry extends b00t's datum system:
 
 ## Status
 
-This is an **aspirational** design being built out iteratively:
+Core proxy features are now **implemented and functional**:
 
-- ✅ Datum integration (flashbacker.cli.toml, flashbacker.mcp.toml)
-- ✅ MCP server wrapper (flashbacker-mcp)
-- ✅ Docker fallback support
-- 🚧 Codified opinions configuration
-- 🚧 Proxy layer implementation
-- 🚧 Tool discovery automation
-- 🚧 Cross-tool composition patterns
+**✅ Implemented:**
+- Datum integration (flashbacker.cli.toml, flashbacker.mcp.toml)
+- MCP server wrapper (flashbacker-mcp)
+- Docker fallback support
+- Codified opinions configuration (registry/tools/flashbacker.opinions.toml)
+- Proxy layer with opinion enforcement:
+  - Pre-flight checks (Node.js version validation)
+  - Init status verification (blocks commands before init)
+  - Auto-correct suggestions (--mcp flag recommendation)
+  - Warning system (manual saves discouraged)
+- Schema validation (registry/schemas/tool-opinions.schema.toml)
+
+**🚧 Future Enhancements:**
+- Cross-tool composition patterns
+- Advanced hive coordination
+- Dynamic opinion loading from multiple sources
+- Tool capability auto-detection
 
 ## Vision
 

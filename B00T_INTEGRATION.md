@@ -407,31 +407,34 @@ The registry includes opinions such as:
 - Status tracking: Required
 - Why: Better progress tracking and estimates
 
-### Proxy Behaviors (Future)
+### Proxy Behaviors (✅ Implemented)
 
-When implemented, the proxy will:
+The proxy layer is now functional and enforces opinions:
 
-- **Pre-flight checks**: Verify Node.js version, init status
-- **Auto-correct**: Upgrade `init` to `init --mcp` for better capabilities
-- **Learning**: Suggest personas based on task context
-- **Enforcement**: Warn on anti-patterns with helpful explanations
+- **✅ Pre-flight checks**: Verifies Node.js version (18-24), validates init status before commands
+- **✅ Auto-correct suggestions**: Recommends `--mcp` flag when running `init`
+- **✅ Enforcement**: Blocks commands when project not initialized, shows helpful error messages
+- **✅ Warning system**: Warns when using manual saves (automatic hooks preferred)
+- **🚧 Advanced learning**: Context-based persona suggestions (future enhancement)
 
 ### Status
 
-This is **aspirational** - the vision for how the registry should work:
+Core proxy features are **implemented and working**:
 
-✅ **Completed:**
+✅ **Implemented & Tested:**
 - Datum integration (flashbacker.cli.toml, flashbacker.mcp.toml)
-- MCP server (flashbacker-mcp)
+- MCP server (flashbacker-mcp) with poly-proxy enforcement
 - Docker fallback support
 - Codified opinions file (registry/tools/flashbacker.opinions.toml)
 - Schema definition (registry/schemas/tool-opinions.schema.toml)
+- Pre-flight checks (Node.js version, project initialization)
+- Opinion enforcement (blocking errors, warnings, suggestions)
+- Auto-correct recommendations
 
-🚧 **In Progress:**
-- Proxy layer implementation
-- Automatic opinion enforcement
+🚧 **Future Enhancements:**
 - Cross-tool composition patterns
-- Hive coordination protocols
+- Advanced hive coordination protocols
+- Dynamic persona suggestions based on context
 
 ### Usage Vision
 

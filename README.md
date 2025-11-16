@@ -114,9 +114,9 @@ b00t flashback persona architect "review auth system"
 - **MCP Integration**: Exposed as MCP server (flashbacker-mcp) with 12 tools
 - **Docker Support**: Fallback containerized deployment
 - **Multi-Agent**: Share project memory across agent hive
-- **Poly-Proxy Registry** *(aspirational)*: Codified opinions on tool usage and best practices
+- **Poly-Proxy Registry**: Codified opinions with enforcement (pre-flight checks, auto-correct, warnings)
 
-> 📦 **[B00t Integration Guide →](B00T_INTEGRATION.md)** - Complete setup, usage, and aspirational registry
+> 📦 **[B00t Integration Guide →](B00T_INTEGRATION.md)** - Complete setup, usage, and poly-proxy registry
 
 ## 🎯 How You Actually Use Flashbacker
 
