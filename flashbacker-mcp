@@ -1,12 +1,33 @@
 #!/usr/bin/env node
 /**
- * Flashbacker MCP Server
+ * Flashbacker MCP Server with Poly-Proxy Opinion Enforcement
  * Wraps flashback CLI commands as MCP tools for b00t integration
  * Protocol: stdio JSON-RPC
+ * Enforces codified opinions for optimal usage
  */
 
 const { spawn } = require('child_process');
 const readline = require('readline');
+const fs = require('fs');
+const path = require('path');
+
+// Codified opinions (from registry/tools/flashbacker.opinions.toml)
+const OPINIONS = {
+  environment: {
+    preferredNode: '22.x',
+    minimumNode: '18.0.0',
+    maximumNode: '24.999.999'
+  },
+  initialization: {
+    requiredCommand: 'flashback init',
+    requiredBefore: ['persona', 'agent', 'memory', 'working-plan', 'discuss', 'debt-hunter', 'fix-master'],
+    recommendMcpFlag: true
+  },
+  sessionManagement: {
+    strategy: 'automatic',
+    discourageManualSaves: true
+  }
+};
 
 const TOOLS = [
   {
@@ -15,14 +36,14 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        mcp: { type: 'boolean', description: 'Include MCP servers' },
+        mcp: { type: 'boolean', description: 'Include MCP servers (RECOMMENDED)' },
         refresh: { type: 'boolean', description: 'Refresh existing installation' }
       }
     }
   },
   {
     name: 'flashback_persona',
-    description: 'Get AI persona analysis',
+    description: 'Get AI persona analysis (quick, current conversation)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -34,7 +55,7 @@ const TOOLS = [
   },
   {
     name: 'flashback_agent',
-    description: 'Gather context for agent analysis',
+    description: 'Gather context for agent analysis (deep, full project context)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -46,7 +67,7 @@ const TOOLS = [
   },
   {
     name: 'flashback_memory',
-    description: 'Manage project memory',
+    description: 'Manage project memory (capture WHY decisions were made)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -58,7 +79,7 @@ const TOOLS = [
   },
   {
     name: 'flashback_working_plan',
-    description: 'Manage working plan',
+    description: 'Manage working plan (small, actionable tasks)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -70,7 +91,7 @@ const TOOLS = [
   },
   {
     name: 'flashback_save_session',
-    description: 'Save session insights',
+    description: 'Save session insights (manual save - automatic hooks preferred)',
     inputSchema: {
       type: 'object',
       properties: {
@@ -134,7 +155,141 @@ const TOOLS = [
   }
 ];
 
-async function executeFlashback(toolName, args) {
+/**
+ * Check if project is initialized (has .claude/flashback directory)
+ */
+function isProjectInitialized(cwd) {
+  const flashbackDir = path.join(cwd, '.claude', 'flashback');
+  return fs.existsSync(flashbackDir);
+}
+
+/**
+ * Check Node.js version against requirements
+ */
+function checkNodeVersion() {
+  const currentVersion = process.version;
+  const versionMatch = currentVersion.match(/^v(\d+)\.(\d+)\.(\d+)/);
+
+  if (!versionMatch) {
+    return { ok: false, warning: `Could not parse Node.js version: ${currentVersion}` };
+  }
+
+  const major = parseInt(versionMatch[1]);
+  const minor = parseInt(versionMatch[2]);
+  const patch = parseInt(versionMatch[3]);
+
+  // Check minimum version (18.0.0)
+  if (major < 18) {
+    return {
+      ok: false,
+      error: `Node.js ${currentVersion} is below minimum required version 18.0.0. Please upgrade to Node.js 18.x or higher.`
+    };
+  }
+
+  // Check maximum version (24.999.999)
+  if (major >= 25) {
+    return {
+      ok: false,
+      warning: `Node.js ${currentVersion} is above maximum tested version 24.x. Compatibility not guaranteed.`
+    };
+  }
+
+  // Check if using preferred version (22.x)
+  if (major !== 22) {
+    return {
+      ok: true,
+      suggestion: `Node.js ${currentVersion} works, but 22.x LTS is recommended for optimal compatibility with native modules.`
+    };
+  }
+
+  return { ok: true };
+}
+
+/**
+ * Pre-flight checks before executing command
+ */
+function preFlightChecks(toolName, args, cwd) {
+  const warnings = [];
+  const suggestions = [];
+  const errors = [];
+
+  // Check Node.js version
+  const nodeCheck = checkNodeVersion();
+  if (nodeCheck.error) {
+    errors.push(nodeCheck.error);
+  } else if (nodeCheck.warning) {
+    warnings.push(nodeCheck.warning);
+  } else if (nodeCheck.suggestion) {
+    suggestions.push(nodeCheck.suggestion);
+  }
+
+  // Check initialization for commands that require it
+  const command = toolName.replace('flashback_', '').replace(/_/g, '-');
+  const requiresInit = OPINIONS.initialization.requiredBefore.includes(command);
+
+  if (requiresInit && !isProjectInitialized(cwd)) {
+    errors.push(
+      `Project not initialized. Run 'flashback init' first.\n` +
+      `Opinion: Initialization sets up complete infrastructure for session continuity (hooks, memory, templates).`
+    );
+  }
+
+  // Auto-correct: Suggest --mcp flag for init
+  if (toolName === 'flashback_init' && !args.mcp && OPINIONS.initialization.recommendMcpFlag) {
+    suggestions.push(
+      `Consider adding --mcp flag to include context7, playwright, and sequential-thinking MCP servers.\n` +
+      `Opinion: MCP servers enhance capabilities significantly. Use: flashback init --mcp`
+    );
+  }
+
+  // Warn on manual saves (automatic hooks preferred)
+  if (toolName === 'flashback_save_session' && OPINIONS.sessionManagement.discourageManualSaves) {
+    warnings.push(
+      `Manual session saves work, but automatic SessionStart hooks are preferred.\n` +
+      `Opinion: Hooks ensure consistency and eliminate repeated manual context-setting.`
+    );
+  }
+
+  return { errors, warnings, suggestions };
+}
+
+/**
+ * Format pre-flight results as user-friendly message
+ */
+function formatPreFlightResults(checks) {
+  const parts = [];
+
+  if (checks.errors.length > 0) {
+    parts.push('🛑 ERRORS:\n' + checks.errors.map(e => `  - ${e}`).join('\n'));
+  }
+
+  if (checks.warnings.length > 0) {
+    parts.push('⚠️  WARNINGS:\n' + checks.warnings.map(w => `  - ${w}`).join('\n'));
+  }
+
+  if (checks.suggestions.length > 0) {
+    parts.push('💡 SUGGESTIONS:\n' + checks.suggestions.map(s => `  - ${s}`).join('\n'));
+  }
+
+  return parts.join('\n\n');
+}
+
+async function executeFlashback(toolName, args, cwd) {
+  // Run pre-flight checks
+  const checks = preFlightChecks(toolName, args, cwd);
+
+  // If there are errors, fail fast with helpful message
+  if (checks.errors.length > 0) {
+    const errorMessage = formatPreFlightResults(checks);
+    return {
+      content: [{
+        type: 'text',
+        text: `${errorMessage}\n\n❌ Command blocked by poly-proxy opinion enforcement.`
+      }],
+      isError: false // Return as content, not error, so user sees the helpful message
+    };
+  }
+
   // Convert tool name to flashback command
   const command = toolName.replace('flashback_', '').replace(/_/g, '-');
   const flashbackArgs = [command];
@@ -179,9 +334,7 @@ async function executeFlashback(toolName, args) {
   }
 
   return new Promise((resolve, reject) => {
-    const proc = spawn('flashback', flashbackArgs, {
-      cwd: process.env.CWD || process.cwd()
-    });
+    const proc = spawn('flashback', flashbackArgs, { cwd });
 
     let stdout = '';
     let stderr = '';
@@ -190,8 +343,16 @@ async function executeFlashback(toolName, args) {
     proc.stderr.on('data', (data) => { stderr += data.toString(); });
 
     proc.on('close', (code) => {
+      let output = stdout;
+
+      // Prepend warnings/suggestions if any
+      if (checks.warnings.length > 0 || checks.suggestions.length > 0) {
+        const feedback = formatPreFlightResults(checks);
+        output = `${feedback}\n\n${'='.repeat(60)}\n\n${stdout}`;
+      }
+
       if (code === 0) {
-        resolve({ content: [{ type: 'text', text: stdout }] });
+        resolve({ content: [{ type: 'text', text: output }] });
       } else {
         reject({ error: stderr || stdout });
       }
@@ -227,8 +388,9 @@ class FlashbackerMCPServer {
                 tools: {}
               },
               serverInfo: {
-                name: 'flashbacker',
-                version: '2.4.1'
+                name: 'flashbacker-mcp',
+                version: '2.4.1',
+                description: 'Flashbacker with poly-proxy opinion enforcement'
               }
             }
           };
@@ -244,7 +406,8 @@ class FlashbackerMCPServer {
 
         case 'tools/call':
           const { name, arguments: args } = req.params;
-          const result = await executeFlashback(name, args || {});
+          const cwd = process.env.CWD || process.cwd();
+          const result = await executeFlashback(name, args || {}, cwd);
           return {
             jsonrpc: '2.0',
             id: req.id,
@@ -274,7 +437,19 @@ class FlashbackerMCPServer {
   }
 
   start() {
-    console.error('[Flashbacker MCP] Starting...');
+    console.error('[Flashbacker MCP] Starting with poly-proxy opinion enforcement...');
+
+    // Log Node.js version check
+    const nodeCheck = checkNodeVersion();
+    if (nodeCheck.error) {
+      console.error(`[Flashbacker MCP] ❌ ${nodeCheck.error}`);
+    } else if (nodeCheck.warning) {
+      console.error(`[Flashbacker MCP] ⚠️  ${nodeCheck.warning}`);
+    } else if (nodeCheck.suggestion) {
+      console.error(`[Flashbacker MCP] 💡 ${nodeCheck.suggestion}`);
+    } else {
+      console.error(`[Flashbacker MCP] ✅ Node.js ${process.version} is optimal`);
+    }
 
     this.rl.on('line', async (line) => {
       if (line.trim()) {
