@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """OODA Loop Task Processor - Observe, Orient, Decide, Act"""
 import json
-import sys
 from pathlib import Path
 
 TASKS_FILE = Path("tasks.jsonl")
