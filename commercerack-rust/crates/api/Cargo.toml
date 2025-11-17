@@ -1,0 +1,12 @@
+[package]
+name = "commercerack-api"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+commercerack-db = { path = "../db" }
+commercerack-customer = { path = "../customer" }
+axum.workspace = true
+tokio.workspace = true
+serde.workspace = true
+anyhow.workspace = true

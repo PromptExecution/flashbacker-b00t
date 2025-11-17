@@ -1,0 +1,12 @@
+[package]
+name = "commercerack-jsonapi"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+commercerack-db = { path = "../crates/db" }
+axum.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true

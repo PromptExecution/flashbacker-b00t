@@ -1,0 +1,11 @@
+[package]
+name = "commercerack-inventory"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+commercerack-db = { path = "../db" }
+sqlx.workspace = true
+tokio.workspace = true
+serde.workspace = true
+anyhow.workspace = true
