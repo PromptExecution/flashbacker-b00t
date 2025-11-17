@@ -529,3 +529,48 @@ help:
     @echo "  just build                - Build workspace"
     @echo ""
     @echo "Full list: just --list"
+
+# =============================================================================
+# TASK MANAGEMENT (OODA Loop)
+# =============================================================================
+
+# Run OODA loop: Observe → Orient → Decide → Act
+ooda:
+    python3 agents/scripts/task_processor.py
+
+# Show task status
+tasks-status:
+    #!/usr/bin/env bash
+    echo "📊 Task Status:"
+    echo "Done:    $(grep '"status":"done"' tasks.jsonl | wc -l)"
+    echo "Pending: $(grep '"status":"pending"' tasks.jsonl | wc -l)"
+    echo ""
+    echo "By Phase:"
+    for phase in research develop test evaluate; do
+        count=$(grep "\"phase\":\"$phase\"" tasks.jsonl | wc -l)
+        echo "  $phase: $count"
+    done
+
+# Mark task as done
+task-done task_id:
+    #!/usr/bin/env bash
+    sed -i 's/"id":"{{task_id}}","phase":"\([^"]*\)","status":"pending"/"id":"{{task_id}}","phase":"\1","status":"done"/' tasks.jsonl
+    echo "✅ Task {{task_id}} marked done"
+
+# Add new task
+task-add id phase task agent deps="":
+    #!/usr/bin/env bash
+    if [ -z "{{deps}}" ]; then
+        echo '{"id":"{{id}}","phase":"{{phase}}","status":"pending","task":"{{task}}","agent":"{{agent}}"}' >> tasks.jsonl
+    else
+        echo '{"id":"{{id}}","phase":"{{phase}}","status":"pending","task":"{{task}}","deps":{{deps}},"agent":"{{agent}}"}' >> tasks.jsonl
+    fi
+    echo "✅ Task {{id}} added"
+
+# Use b00t lfmf for lessons learned
+lfmf category lesson:
+    b00t lfmf {{category}} "{{lesson}}"
+
+# Query b00t advice
+advice topic query:
+    b00t advice {{topic}} "{{query}}"

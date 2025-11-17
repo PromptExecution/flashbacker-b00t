@@ -129,3 +129,15 @@ module.exports = {
     }
   ]
 };
+,
+    {
+      name: 'task-processor',
+      script: './agents/scripts/task_processor.py',
+      interpreter: 'python3',
+      instances: 1,
+      cron_restart: '*/5 * * * *',  // Run every 5 minutes
+      autorestart: false,
+      env: {
+        TASK_MODE: 'ooda-loop'
+      }
+    }
