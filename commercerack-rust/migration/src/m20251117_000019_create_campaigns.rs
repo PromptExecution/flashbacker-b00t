@@ -1,0 +1,150 @@
+use sea_orm_migration::prelude::*;
+
+#[derive(DeriveMigrationName)]
+pub struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(Campaigns::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(Campaigns::Campaignid)
+                            .string_len(20)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Username)
+                            .string_len(20)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Mid)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Subject)
+                            .string_len(70)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Prt)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::TemplateOrigin)
+                            .string_len(36)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Recipients)
+                            .text()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::SendEmail)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::SendAppleios)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::SendAndroid)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::SendFacebook)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::SendTwitter)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::SendSms)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::QueueMode)
+                            .string()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Expires)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Coupon)
+                            .string_len(10)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::RssData)
+                            .text()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Status)
+                            .string()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Starttime)
+                            .timestamp()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Campaigns::Jobid)
+                            .integer()
+                            .null()
+                    )
+                    .to_owned(),
+            )
+            .await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(Campaigns::Table).to_owned())
+            .await
+    }
+}
+
+#[derive(DeriveIden)]
+enum Campaigns {
+    Table,
+    Campaignid,
+    Username,
+    Mid,
+    Subject,
+    Prt,
+    TemplateOrigin,
+    Recipients,
+    SendEmail,
+    SendAppleios,
+    SendAndroid,
+    SendFacebook,
+    SendTwitter,
+    SendSms,
+    QueueMode,
+    Expires,
+    Coupon,
+    RssData,
+    Status,
+    Starttime,
+    Jobid,
+}

@@ -1,0 +1,131 @@
+use sea_orm_migration::prelude::*;
+
+#[derive(DeriveMigrationName)]
+pub struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(AmazonOrders::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(AmazonOrders::Mid)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::Prt)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::Docid)
+                            .big_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::AmazonOrderid)
+                            .string_len(20)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::OurOrderid)
+                            .string_len(30)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::AckGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::TrackGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::HasTracking)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::OrderTotal)
+                            .string()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::Dirty)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::PostedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::ShippingMethod)
+                            .string()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::NeworderAckProcessedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::NeworderAckDocid)
+                            .big_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::FulfillmentAckRequestedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::FulfillmentAckProcessedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(AmazonOrders::FulfillmentAckDocid)
+                            .big_integer()
+                            .null()
+                    )
+                    .to_owned(),
+            )
+            .await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(AmazonOrders::Table).to_owned())
+            .await
+    }
+}
+
+#[derive(DeriveIden)]
+enum AmazonOrders {
+    Table,
+    Mid,
+    Prt,
+    Docid,
+    AmazonOrderid,
+    OurOrderid,
+    AckGmt,
+    TrackGmt,
+    HasTracking,
+    OrderTotal,
+    Dirty,
+    PostedGmt,
+    ShippingMethod,
+    NeworderAckProcessedGmt,
+    NeworderAckDocid,
+    FulfillmentAckRequestedGmt,
+    FulfillmentAckProcessedGmt,
+    FulfillmentAckDocid,
+}

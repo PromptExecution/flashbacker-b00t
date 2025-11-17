@@ -1,0 +1,210 @@
+use sea_orm_migration::prelude::*;
+
+#[derive(DeriveMigrationName)]
+pub struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(BatchJobs::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(BatchJobs::Username)
+                            .string_len(20)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Lusername)
+                            .string_len(10)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Mid)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Prt)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Guid)
+                            .string_len(36)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::JobType)
+                            .string_len(3)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Version)
+                            .string()
+                            .not_null()
+                            .default(0)
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::BatchExec)
+                            .string_len(45)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::ParametersUuid)
+                            .string_len(36)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::BatchVars)
+                            .text()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::QueuedTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::StartTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::EstdoneTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::EndTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::ArchivedTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::AbortedTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Title)
+                            .string_len(65)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::Status)
+                            .string()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::StatusMsg)
+                            .string_len(100)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::RecordsDone)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::RecordsTotal)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::RecordsWarn)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::RecordsError)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::HasSlog)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::OutputFile)
+                            .string_len(50)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::IsRunning)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::IsCrashed)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::IsAbortable)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(BatchJobs::JobCostCycles)
+                            .integer()
+                            .null()
+                    )
+                    .to_owned(),
+            )
+            .await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(BatchJobs::Table).to_owned())
+            .await
+    }
+}
+
+#[derive(DeriveIden)]
+enum BatchJobs {
+    Table,
+    Username,
+    Lusername,
+    Mid,
+    Prt,
+    Guid,
+    JobType,
+    Version,
+    BatchExec,
+    ParametersUuid,
+    BatchVars,
+    QueuedTs,
+    StartTs,
+    EstdoneTs,
+    EndTs,
+    ArchivedTs,
+    AbortedTs,
+    Title,
+    Status,
+    StatusMsg,
+    RecordsDone,
+    RecordsTotal,
+    RecordsWarn,
+    RecordsError,
+    HasSlog,
+    OutputFile,
+    IsRunning,
+    IsCrashed,
+    IsAbortable,
+    JobCostCycles,
+}

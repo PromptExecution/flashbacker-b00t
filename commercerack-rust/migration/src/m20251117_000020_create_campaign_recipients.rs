@@ -1,0 +1,119 @@
+use sea_orm_migration::prelude::*;
+
+#[derive(DeriveMigrationName)]
+pub struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(CampaignRecipients::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Mid)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Cid)
+                            .big_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Cpg)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::SentGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Opened)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::ClickedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::OpenedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Unsubscribed)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Bounced)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::LockedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::LockedPid)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Clicked)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::Purchased)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::TotalSales)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(CampaignRecipients::PurchasedGmt)
+                            .integer()
+                            .null()
+                    )
+                    .to_owned(),
+            )
+            .await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(CampaignRecipients::Table).to_owned())
+            .await
+    }
+}
+
+#[derive(DeriveIden)]
+enum CampaignRecipients {
+    Table,
+    Mid,
+    Cid,
+    Cpg,
+    SentGmt,
+    Opened,
+    ClickedGmt,
+    OpenedGmt,
+    Unsubscribed,
+    Bounced,
+    LockedGmt,
+    LockedPid,
+    Clicked,
+    Purchased,
+    TotalSales,
+    PurchasedGmt,
+}

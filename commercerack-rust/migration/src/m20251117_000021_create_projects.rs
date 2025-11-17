@@ -1,0 +1,126 @@
+use sea_orm_migration::prelude::*;
+
+#[derive(DeriveMigrationName)]
+pub struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(Projects::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(Projects::UpdatedTs)
+                            .timestamp()
+                            .null()
+                            .default("0000-00-00 00:00:00")
+                    )
+                    .col(
+                        ColumnDef::new(Projects::Mid)
+                            .integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::Username)
+                            .string_len(20)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::Title)
+                            .string_len(45)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::Uuid)
+                            .string_len(32)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::Secret)
+                            .string_len(32)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::Type)
+                            .string()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::GithubRepo)
+                            .string_len(255)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::GithubBranch)
+                            .string_len(20)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::GithubTxlog)
+                            .text()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::AppRelease)
+                            .string_len(6)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::AppVersion)
+                            .string_len(16)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::AppSeo)
+                            .string_len(6)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::AppExpire)
+                            .string_len(10)
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::AppForceSecure)
+                            .small_integer()
+                            .null()
+                    )
+                    .col(
+                        ColumnDef::new(Projects::AppRoot)
+                            .string_len(50)
+                            .null()
+                    )
+                    .to_owned(),
+            )
+            .await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(Projects::Table).to_owned())
+            .await
+    }
+}
+
+#[derive(DeriveIden)]
+enum Projects {
+    Table,
+    UpdatedTs,
+    Mid,
+    Username,
+    Title,
+    Uuid,
+    Secret,
+    Type,
+    GithubRepo,
+    GithubBranch,
+    GithubTxlog,
+    AppRelease,
+    AppVersion,
+    AppSeo,
+    AppExpire,
+    AppForceSecure,
+    AppRoot,
+}
