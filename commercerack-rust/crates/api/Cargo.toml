@@ -1,0 +1,29 @@
+[package]
+name = "commercerack-api"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+commercerack-db = { path = "../db" }
+commercerack-customer = { path = "../customer" }
+commercerack-product = { path = "../product" }
+commercerack-order = { path = "../order" }
+commercerack-cart = { path = "../cart" }
+entity = { path = "../../entity" }
+sea-orm.workspace = true
+axum.workspace = true
+tokio.workspace = true
+serde.workspace = true
+anyhow.workspace = true
+rust_decimal.workspace = true
+jsonwebtoken.workspace = true
+utoipa.workspace = true
+utoipa-swagger-ui.workspace = true
+utoipa-rapidoc.workspace = true
+tower-http.workspace = true
+chrono.workspace = true
+
+[dev-dependencies]
+tower.workspace = true
+serde_json.workspace = true
+sea-orm = { workspace = true, features = ["mock"] }

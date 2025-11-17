@@ -1,0 +1,21 @@
+[package]
+name = "commercerack-customer"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+commercerack-db = { path = "../db" }
+sea-orm.workspace = true
+entity = { path = "../../entity" }
+tokio.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+argon2.workspace = true
+sha2.workspace = true
+async-trait = "0.1"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }

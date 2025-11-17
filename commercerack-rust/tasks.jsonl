@@ -1,0 +1,2 @@
+{"id":"T013","phase":"develop","status":"done","task":"Implement SeaORM migration infrastructure","deps":["T001","T003"],"agent":"database-architect","outcome":"22 table migrations + entity definitions + service layers (Customer, Product, Order)"}
+{"id":"T014","phase":"develop","status":"pending","task":"Integrate SeaORM services into crates","deps":["T013"],"agent":"rust-expert","next":"Replace lib.rs with lib_seaorm.rs in customer/product/order crates"}
