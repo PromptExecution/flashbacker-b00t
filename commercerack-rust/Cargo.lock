@@ -623,12 +623,14 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "argon2",
+ "async-trait",
  "chrono",
  "commercerack-db",
+ "entity",
+ "sea-orm",
  "serde",
  "serde_json",
  "sha2",
- "sqlx",
  "thiserror 1.0.69",
  "tokio",
 ]
